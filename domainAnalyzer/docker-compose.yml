@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  domain-analyzer:
+    build: .
+    container_name: domain-analyzer-pro
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/tmp
+    environment:
+      - PORT=5000
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+

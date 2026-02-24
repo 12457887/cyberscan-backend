@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complete Scan Report</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 24px 0;
+      background: #f5f7fb;
+      color: #0f172a;
+      font-size: 13px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    }
+    header { text-align: center; }
+    header img { height: 72px; margin-bottom: 14px; }
+    header h1 { margin: 0; font-size: 26px; color: #0f172a; }
+    header p { margin: 4px 0 0; color: #64748b; }
+    .tag {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #16a34a;
+      background:#f0fdf4;
+      color:#166534;
+      font-size:13px;
+    }
+    .summary-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+    .summary-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+    .severity-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #0f172a;
+    }
+    .severity-row:last-child { margin-bottom: 0; }
+    .severity-label { min-width: 70px; }
+    .severity-count { min-width: 20px; text-align: right; }
+    .severity-bar {
+      flex: 1;
+      background: #e2e8f0;
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .severity-bar span { display: block; height: 100%; border-radius: inherit; }
+    .summary-card.info-card p {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #0f172a;
+    }
+    .summary-card.info-card p:last-child { margin-bottom: 0; }
+    .status-finished { color: #22c55e; font-weight: 700; }
+    .section {
+      margin-top: 28px;
+      padding: 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background:#fbfcfe;
+    }
+    .section h2 { margin: 0 0 16px; font-size: 18px; color:#0f172a; }
+    .stats-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+      gap:12px;
+    }
+    .stat-card {
+      padding:16px;
+      background:#fff;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,0.08);
+    }
+    .stat-card h4 {
+      margin:0;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      color:#64748b;
+    }
+    .stat-card strong {
+      display:block;
+      font-size:22px;
+      margin-top:6px;
+    }
+    .progress { margin-top:8px; height:6px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+    .progress span { display:block; height:100%; }
+    .critical span { background:#ef4444; }
+    .high span { background:#f97316; }
+    .medium span { background:#fbbf24; }
+    .low span { background:#3b82f6; }
+    .info span { background:#10b981; }
+    .tech-section .section h2,
+    .tech-section h2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tech-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+    .tech-list li {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+    .tech-list li:last-child { border-bottom: none; }
+    table {
+      width:100%;
+      border-collapse: collapse;
+      background:#fff;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 6px 16px rgba(15,23,42,0.05);
+      font-size:12px;
+    }
+    th, td { padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; }
+    th { background:#0f172a; color:#fff; text-transform:uppercase; font-size:11px; letter-spacing:0.08em; }
+    tr:last-child td { border-bottom:none; }
+    .severity-info { color:#0f766e; font-weight:600; }
+    .severity-low { color:#2563eb; font-weight:600; }
+    .severity-medium { color:#ea580c; font-weight:600; }
+    .severity-high { color:#c2410c; font-weight:600; }
+    .severity-critical { color:#dc2626; font-weight:600; }
+    .info-card {
+      margin-top:12px;
+      padding:14px;
+      border-radius:14px;
+      border:1px dashed rgba(15,23,42,0.3);
+      background:#f8fafc;
+    }
+    .no-result {
+      text-align:center;
+      padding:32px;
+      border-radius:16px;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#b45309;
+      font-weight:600;
+      margin-top:30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="https://i.postimg.cc/Hxdd4mBf/logo-rapport.png" alt="CyberShield logo">
+      <h1>Vulnerability Report</h1>
+      <p>Complete mode</p>
+      <div class="tag">{{ scan.target_url }}</div>
+    </header>
+
+    {% set scanned_at = 'N/A' %}
+    {% if scan.stop_time %}
+      {% set scanned_at = scan.stop_time %}
+    {% elif scan.cms_scan and scan.cms_scan.scanned_at %}
+      {% set scanned_at = scan.cms_scan.scanned_at %}
+    {% elif zap_scan and zap_scan.stop_time %}
+      {% set scanned_at = zap_scan.stop_time %}
+    {% endif %}
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <div class="severity-row critical">
+          <span class="severity-label">Critical:</span>
+          <div class="severity-bar"><span style="width: {{ critical_width }}%; background:#ef4444;"></span></div>
+          <span class="severity-count">{{ critical_count }}</span>
+        </div>
+        <div class="severity-row high">
+          <span class="severity-label">High:</span>
+          <div class="severity-bar"><span style="width: {{ high_width }}%; background:#f97316;"></span></div>
+          <span class="severity-count">{{ high_count }}</span>
+        </div>
+        <div class="severity-row medium">
+          <span class="severity-label">Medium:</span>
+          <div class="severity-bar"><span style="width: {{ medium_width }}%; background:#fbbf24;"></span></div>
+          <span class="severity-count">{{ medium_count }}</span>
+        </div>
+        <div class="severity-row low">
+          <span class="severity-label">Low:</span>
+          <div class="severity-bar"><span style="width: {{ low_width }}%; background:#3b82f6;"></span></div>
+          <span class="severity-count">{{ low_count }}</span>
+        </div>
+        <div class="severity-row info">
+          <span class="severity-label">Info:</span>
+          <div class="severity-bar"><span style="width: {{ info_width }}%; background:#10b981;"></span></div>
+          <span class="severity-count">{{ info_count }}</span>
+        </div>
+      </div>
+      <div class="summary-card info-card">
+        <p><strong>Scanned at:</strong> {{ scanned_at }}</p>
+        <p><strong>Status:</strong> <span class="status-finished">Finished</span></p>
+      </div>
+    </section>
+
+    {% if zap_scan and zap_scan.alerts or nuclei_scan and nuclei_scan.parsed_results %}
+
+      {% if scan.recon and scan.recon.webanalyze and scan.recon.webanalyze.technologies and scan.recon.webanalyze.technologies|length > 0 %}
+        <section class="section tech-section">
+          <h2>🔎 Detected technologies</h2>
+          <ul class="tech-list">
+            {% for tech in scan.recon.webanalyze.technologies %}
+              <li>{{ tech.name }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if scan.recon.httpx and not scan.recon.httpx.error %}
+        {% set has_data = scan.recon.httpx.ip or scan.recon.httpx.status_code or scan.recon.httpx.title %}
+        {% if has_data %}
+          <section class="section">
+            <h2>Host information</h2>
+            <table>
+              <tbody>
+                {% if scan.recon.httpx.ip %}<tr><td style="width:170px;"><strong>IP address</strong></td><td>{{ scan.recon.httpx.ip }}</td></tr>{% endif %}
+                {% if scan.recon.httpx.status_code %}<tr><td><strong>HTTP status</strong></td><td>{{ scan.recon.httpx.status_code }}</td></tr>{% endif %}
+                {% if scan.recon.httpx.title %}<tr><td><strong>Site title</strong></td><td>{{ scan.recon.httpx.title }}</td></tr>{% endif %}
+                {% if scan.recon.httpx.tech %}<tr><td><strong>Technologies</strong></td><td>{{ scan.recon.httpx.tech | join(', ') }}</td></tr>{% endif %}
+              </tbody>
+            </table>
+          </section>
+        {% endif %}
+      {% endif %}
+
+      {% if nuclei_scan and nuclei_scan.parsed_results %}
+        {% set grouped_nuclei = {} %}
+        {% for vuln in nuclei_scan.parsed_results %}
+          {% set type = vuln.name.split(':')[0] %}
+          {% set _ = grouped_nuclei.setdefault(type, []) %}
+          {% set _ = grouped_nuclei[type].append(vuln) %}
+        {% endfor %}
+        {% for type, vulns in grouped_nuclei.items() %}
+          <section class="section">
+            <h2>Nuclei · {{ type }}</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Protocol</th>
+                  <th>Severity</th>
+                  <th>Host</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for vuln in vulns %}
+                  <tr>
+                    <td>{{ vuln.name }}</td>
+                    <td>{{ vuln.protocol }}</td>
+                    <td class="severity-{{ vuln.severity | lower }}">{{ vuln.severity }}</td>
+                    <td>{{ vuln.host }}</td>
+                    <td>
+                      {% if vuln.details is string %}
+                        {{ vuln.details }}
+                      {% elif vuln.details is iterable and vuln.details %}
+                        <ul>
+                          {% for detail in vuln.details %}
+                            <li>{{ detail }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        -
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </section>
+        {% endfor %}
+      {% endif %}
+
+      {% if zap_scan and zap_scan.alerts %}
+        {% set grouped = {} %}
+        {% for alert in zap_scan.alerts %}
+          {% set risk = alert.risk|string|lower %}
+          {% set vuln_name = alert.name if alert.name else alert.alert %}
+          {% if risk in ["critical","high","medium"] %}
+            {% set key = vuln_name %}
+            {% set _ = grouped.setdefault(key, {'name': vuln_name, 'risk': alert.risk, 'description': alert.description, 'solution': alert.solution, 'urls': []}) %}
+            {% if alert.url not in grouped[key]['urls'] %}
+              {% set _ = grouped[key]['urls'].append(alert.url) %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {% for name, vuln in grouped.items() %}
+          <section class="section">
+            <h2>ZAP · {{ vuln.name }}</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Risk</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="severity-{{ vuln.risk|lower }}">{{ vuln.risk }}</td>
+                  <td>{{ vuln.description }}</td>
+                </tr>
+              </tbody>
+            </table>
+            {% if vuln.solution %}
+              <div class="info-card"><strong>Remediation:</strong> {{ vuln.solution }}</div>
+            {% endif %}
+            {% if vuln.urls %}
+              <div class="info-card">
+                <strong>Affected URLs:</strong>
+                <ul>
+                  {% for url in vuln.urls[:10] %}
+                    <li>{{ url }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </section>
+        {% endfor %}
+      {% endif %}
+
+    {% else %}
+      <div class="no-result">
+        ⚠ The target could not be reached or the scan failed. Please try again later.
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

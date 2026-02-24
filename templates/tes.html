@@ -1,0 +1,271 @@
+{
+  "_id": { "$oid": "6852bd16a82a840b73bec000" },
+  "scan_id": "ad633f10-a9c4-4fdb-beff-e5ddb7d9a841",
+  "target_url": "https://antares.tn/",
+  "cms_type": "drupal",
+  "cms_scan": {
+    "site": "https://antares.tn/",
+    "scanned_at": "2025-06-16T10:13:46.104160",
+    "scanner_version": "1.3",
+    "version_detected": "unknown",
+    "modules_detected": ["views"],
+    "findings": [
+      "[!] Missing security header: Strict-Transport-Security",
+      "[+] Forbidden but exists: CHANGELOG.txt",
+      "[+] Forbidden but exists: update.php",
+      "[!] 39 known vulnerabilities found"
+    ],
+    "cves": [
+      {
+        "cve": "CVE-2005-3975",
+        "description": "Interpretation conflict in file.inc in Drupal 4.5.0 through 4.5.5 and 4.6.0 through 4.6.3 allows remote authenticated users to inject arbitrary web script or HTML via HTML in a file with a GIF or JPEG file extension, which causes the HTML to be executed by a victim who views the file in Internet Explorer as a result of CVE-2005-3312. NOTE: it could be argued that this vulnerability is due to a design flaw in Internet Explorer and the proper fix should be in that browser; if so, then this should not be treated as a vulnerability in Drupal.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2007-4363",
+        "description": "Multiple cross-site scripting (XSS) vulnerabilities in the nodereference module in Drupal Content Construction Kit (CCK) before 4.7.x-1.6, and 5.x before 5.x-1.6 ,allow remote attackers to inject arbitrary web script or HTML via nodereference fields, when using (1) the plain formatter or (2) the autocomplete text field widget without Views.module.",
+        "severity": "MEDIUM",
+        "module": "nodereference"
+      },
+      {
+        "cve": "CVE-2008-6020",
+        "description": "SQL injection vulnerability in the Views module 6.x before 6.x-2.2 for Drupal allows remote attackers to execute arbitrary SQL commands via unspecified vectors related to \"an exposed filter on CCK text fields.\"",
+        "severity": "HIGH",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2009-0575",
+        "description": "Cross-site scripting (XSS) vulnerability in the theme_views_bulk_operations_confirmation function in views_bulk_operations.module in Views Bulk Operations 5.x before 5.x-1.3 and 6.x before 6.x-1.4, a module for Drupal, allows remote attackers to inject arbitrary web script or HTML via unspecified vectors related to node titles.  NOTE: some of these details are obtained from third party information.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2009-2076",
+        "description": "Cross-site scripting (XSS) vulnerability in Views 6.x before 6.x-2.6, a module for Drupal, allows remote authenticated users to inject arbitrary web script or HTML via (1) exposed filters in the Views UI administrative interface and in the (2) view name parameter in the define custom views feature.  NOTE: vector 2 is only exploitable by users with administer views permissions.",
+        "severity": "LOW",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2009-2237",
+        "description": "Unspecified vulnerability in Views Bulk Operations 5.x-1.x before 5.x-1.4 and 6.x-1.x before 6.x-1.7, a module for Drupal, allows remote attackers to bypass intended access restrictions and modify \"nodes or classes of nodes\" via unknown vectors, probably related to registered procedures (aka actions).",
+        "severity": "HIGH",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2010-4519",
+        "description": "Multiple cross-site request forgery (CSRF) vulnerabilities in the Views UI implementation in the Views module 5.x before 5.x-1.8 and 6.x before 6.x-2.11 for Drupal allow remote attackers to hijack the authentication of administrators for requests that (1) enable all Views or (2) disable all Views.",
+        "severity": "MEDIUM",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2010-4520",
+        "description": "Multiple cross-site scripting (XSS) vulnerabilities in the Views module 6.x before 6.x-2.11 for Drupal allow remote attackers to inject arbitrary web script or HTML via (1) a URL or (2) an aggregator feed title.",
+        "severity": "MEDIUM",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2010-4521",
+        "description": "Cross-site scripting (XSS) vulnerability in the Views module 6.x before 6.x-2.12 for Drupal allows remote attackers to inject arbitrary web script or HTML via a page path.",
+        "severity": "MEDIUM",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2011-4113",
+        "description": "SQL injection vulnerability in the Views module before 6.x-2.13 for Drupal allows remote attackers to execute arbitrary SQL commands via vectors related to \"filters/arguments on certain types of views with specific configurations of arguments.\"",
+        "severity": "HIGH",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2012-2721",
+        "description": "The default views in the Organic Groups (OG) module 6.x-2.x before 6.x-2.4 for Drupal do not properly check permissions when all users have the \"access content\" permission removed, which allows remote attackers to bypass access restrictions and possibly have other unspecified impact.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2012-2074",
+        "description": "Unspecified vulnerability in certain default views in the Ubercart Views module 6.x before 6.x-3.2 for Drupal allows remote attackers to obtain sensitive information via unknown attack vectors.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2012-2081",
+        "description": "The Organic Groups (OG) module 6.x-2.x before 6.x-2.3 for Drupal does not properly restrict access, which allows remote attackers to obtain sensitive information such as private group titles via a request through the Views module.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2012-2064",
+        "description": "Cross-site scripting (XSS) vulnerability in theme/views_lang_switch.theme.inc in the Views Language Switcher module before 7.x-1.2 for Drupal allows remote attackers to inject arbitrary web script or HTML via the q parameter.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2012-1654",
+        "description": "Multiple cross-site scripting (XSS) vulnerabilities in the Data module 6.x-1.x before 6.x-1.0 and 7.x-1.x before 7.x-1.0-alpha3 for Drupal allow remote authenticated users with the administer data tables permission to inject arbitrary web script or HTML via the title parameter in (1) data.views.inc and (2) data_ui/data_ui.admin.inc.",
+        "severity": "LOW",
+        "module": "data"
+      },
+      {
+        "cve": "CVE-2012-1653",
+        "description": "Cross-site scripting (XSS) vulnerability in the Taxonomy Views Integrator (TVI) module 6.x-1.x before 6.x-1.3 for Drupal allows remote authenticated users to inject arbitrary web script or HTML via unspecified vectors, related to \"views pages.\"",
+        "severity": "LOW",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2010-5277",
+        "description": "Unspecified vulnerability in the Views Bulk Operations module 6 before 6.x-1.10 for Drupal allows remote authenticated users with user management permissions to bypass intended access restrictions and delete anonymous users (user 0) via unspecified vectors.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2012-4483",
+        "description": "The commons_discussion_views_default_views function in modules/features/commons_discussion/commons_discussion.views_default.inc in the Drupal Commons module 6.x-2.x before 6.x-2.8 for Drupal does not properly enforce intended node access restrictions, which might allow remote attackers to obtain sensitive information via the recent comments listing.",
+        "severity": "MEDIUM",
+        "module": "features"
+      },
+      {
+        "cve": "CVE-2013-0181",
+        "description": "Cross-site scripting (XSS) vulnerability in Views in the Search API (search_api) module 7.x-1.x before 7.x-1.4 for Drupal, when using certain backends and facets, allows remote attackers to inject arbitrary web script or HTML via unspecified input, which is returned in an error message.",
+        "severity": "LOW",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2013-0321",
+        "description": "Cross-site scripting (XSS) vulnerability in Views in the Ubercart Views (uc_views) module 6.x before 6.x-3.3 for Drupal allows remote attackers to inject arbitrary web script or HTML via the full name field.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2013-0322",
+        "description": "Cross-site scripting (XSS) vulnerability in Views in the Ubercart module 7.x-3.x before 7.x-3.4 for Drupal allows remote attackers to inject arbitrary web script or HTML via the full name field.",
+        "severity": "MEDIUM",
+        "module": "ubercart"
+      },
+      {
+        "cve": "CVE-2013-1887",
+        "description": "Multiple cross-site scripting (XSS) vulnerabilities in the Views module 7.x-3.x before 7.x-3.6 for Drupal allow remote authenticated users with certain permissions to inject arbitrary web script or HTML via certain view configuration fields.",
+        "severity": "LOW",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2013-7063",
+        "description": "The Invitation module 7.x-2.x for Drupal does not properly check permissions, which allows remote attackers to obtain sensitive information via unspecified default views.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2013-4501",
+        "description": "The default views in the Quiz module 6.x-4.x before 6.x-4.5 for Drupal allows remote attackers to obtain sensitive quiz results via unspecified vectors.",
+        "severity": "MEDIUM",
+        "module": "quiz"
+      },
+      {
+        "cve": "CVE-2013-7391",
+        "description": "The Entity API module 7.x-1.x before 7.x-1.2 for Drupal, when using the (a) Views field or (b) area plugins, allows remote attackers to read restricted entities via the (1) field, (2) header, or (3) footer of a View.  NOTE: this identifier was SPLIT from CVE-2013-4273 per ADT5 due to different researcher organizations.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2015-3378",
+        "description": "Open redirect vulnerability in the Views module before 6.x-2.18, 6.x-3.x before 6.x-3.2, and 7.x-3.x before 7.x-3.10 for Drupal, when the Views UI submodule is enabled, allows remote authenticated users to redirect users to arbitrary web sites and conduct phishing attacks via vectors related to the break lock page for edited views.",
+        "severity": "MEDIUM",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2015-3379",
+        "description": "The Views module before 6.x-2.18, 6.x-3.x before 6.x-3.2, and 7.x-3.x before 7.x-3.10 for Drupal does not properly restrict access to the default views configurations, which allows remote authenticated users to obtain sensitive information via unspecified vectors.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2015-4346",
+        "description": "Cross-site scripting (XSS) vulnerability in the SMS Framework module 6.x-1.x before 6.x-1.1 for Drupal, when the \"Send to phone\" submodule is enabled, allows remote attackers to inject arbitrary web script or HTML via unspecified vectors related to message previews.",
+        "severity": "LOW",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2015-5490",
+        "description": "The _views_fetch_data method in includes/cache.inc in the Views module 7.x-3.5 through 7.x-3.10 for Drupal does not rebuild the full cache if the static cache is not empty, which allows remote attackers to bypass intended filters and obtain access to hidden content via unspecified vectors.",
+        "severity": "MEDIUM",
+        "module": "views"
+      },
+      {
+        "cve": "CVE-2015-5509",
+        "description": "The Administration Views module 7.x-1.x before 7.x-1.4 for Drupal, when used with other unspecified modules, does not properly grant access to administration pages, which allows remote administrators to bypass intended restrictions via unspecified vectors.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2015-5512",
+        "description": "The me aliases module 6.x-2.x before 6.x-2.10 and 7.x-1.x before 7.x-1.2 for Drupal allows remote attackers to access Views using the \"me\" user argument handler by substituting \"me\" for a user id in a URL.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2015-5515",
+        "description": "The Views Bulk Operations (VBO) module 6.x-1.x and 7.x-3.x before 7.x-3.3 for Drupal, when the bulk operation for changing Roles is enabled, allows remote authenticated users to edit user accounts and add arbitrary roles to the accounts by leveraging access to a user account listing view with VBO enabled.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2015-7226",
+        "description": "The Administration Views module 7.x-1.x before 7.x-1.5 for Drupal checks access permissions based on the router path from the view instead of the display property, which allows remote attackers to obtain sensitive information via vectors related to the access handler.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2016-6212",
+        "description": "The Views module 7.x-3.x before 7.x-3.14 in Drupal 7.x and the Views module in Drupal 8.x before 8.1.3 might allow remote authenticated users to bypass intended access restrictions and obtain sensitive Statistics information via unspecified vectors.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2017-6923",
+        "description": "In Drupal 8.x prior to 8.3.7 When creating a view, you can optionally use Ajax to update the displayed data via filter parameters. The views subsystem/module did not restrict access to the Ajax endpoint to only views configured to use Ajax. This is mitigated if you have access restrictions on the view. It is best practice to always include some form of access restrictions on all views, even if you are using another module to display them.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2011-3373",
+        "description": "Drupal Views Builk Operations (VBO) module 6.x-1.0 through 6.x-1.10 does not properly escape the vocabulary help when the vocabulary has had user tagging enabled and the \"Modify node taxonomy terms\" action is used. A remote attacker could provide a specially-crafted URL that could lead to cross-site scripting (XSS) attack.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2019-19826",
+        "description": "The Views Dynamic Fields module through 7.x-1.0-alpha4 for Drupal makes insecure unserialize calls in handlers/views_handler_filter_dynamic_fields.inc, as demonstrated by PHP object injection, involving a field_names object and an Archive_Tar object, for file deletion. Code execution might also be possible.",
+        "severity": "CRITICAL",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2024-13254",
+        "description": "Insertion of Sensitive Information Into Sent Data vulnerability in Drupal REST Views allows Forceful Browsing.This issue affects REST Views: from 0.0.0 before 3.0.1.",
+        "severity": "HIGH",
+        "module": "inferred"
+      },
+      {
+        "cve": "CVE-2024-13287",
+        "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Drupal Views SVG Animation allows Cross-Site Scripting (XSS).This issue affects Views SVG Animation: from 0.0.0 before 1.0.1.",
+        "severity": "MEDIUM",
+        "module": "inferred"
+      }
+    ],
+    "target": "antares.tn",
+    "date": "2025-06-16",
+    "scan_id": "e1120aa6-6599-4eb9-b3d3-9d3c60ef0600",
+    "score": { "$numberInt": "80" },
+    "is_vulnerable": true
+  },
+  "nuclei_scan": {
+    "target_url": "https://antares.tn/",
+    "cms": "drupal",
+    "nuclei_output_file": "scan_antares.tn_drupal.txt",
+    "nuclei_stdout": "[dns-waf-detect:cloudflare] [dns] [info] antares.tn\n[missing-sri] [http] [info] https://antares.tn/ [\"https://cdnjs.cloudflare.com/ajax/libs/enquire.js/2.1.6/enquire.min.js\",\"https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.1.0/fontfaceobserver.js\"]\n[drupal-login] [http] [info] https://antares.tn/\n[http-missing-security-headers:cross-origin-embedder-policy] [http] [info] https://antares.tn/\n[http-missing-security-headers:cross-origin-opener-policy] [http] [info] https://antares.tn/\n[http-missing-security-headers:cross-origin-resource-policy] [http] [info] https://antares.tn/\n[http-missing-security-headers:strict-transport-security] [http] [info] https://antares.tn/\n[http-missing-security-headers:permissions-policy] [http] [info] https://antares.tn/\n[http-missing-security-headers:x-permitted-cross-domain-policies] [http] [info] https://antares.tn/\n[http-missing-security-headers:clear-site-data] [http] [info] https://antares.tn/\n[drupal-detect] [http] [info] https://antares.tn/\n[xss-deprecated-header] [http] [info] https://antares.tn/ [\"1; mode=block\"]\n[caa-fingerprint] [dns] [info] antares.tn\n[nameserver-fingerprint] [dns] [info] antares.tn [\"sri.ns.cloudflare.com.\",\"brianna.ns.cloudflare.com.\"]\n[mx-fingerprint] [dns] [info] antares.tn [\"5 alt2.aspmx.l.google.com.\",\"1 aspmx.l.google.com.\",\"5 alt1.aspmx.l.google.com.\",\"10 alt3.aspmx.l.google.com.\",\"10 alt4.aspmx.l.google.com.\"]\n[mx-service-detector:Google Apps] [dns] [info] antares.tn\n[spf-record-detect] [dns] [info] antares.tn [\"v=spf1 mx ip4:151.80.213.177 include:_spf.google.com ~all\"\"]\n[txt-fingerprint] [dns] [info] antares.tn [\"\"google-site-verification=BLOCvNHiYzK-BZA7Ft6cO6X36CwzPRJ-P0RZyVCHddA\"\",\"\"MS=30DD2F2CD0F16D7EA3365B56D58C6E468916806D\"\",\"\"google-site-verification=ScKa4AZPgnt2lY34JFSiGaGENuw4ORZBUjeU1lPUgj4\"\",\"\"ahrefs-site-verification_f15e967d15c60d7aaf91839236b91319da7e012e9f5d4a2eaa0080e4786b01cf\"\",\"\"v=spf1 mx ip4:151.80.213.177 include:_spf.google.com ~all\"\"]\n[dmarc-detect] [dns] [info] _dmarc.antares.tn [\"\"v=DMARC1;p=reject;rua=mailto:8c0942cd@forensics.dmarc-report.com,mailto:28c31c5874@rua.easydmarc.com;ruf=mailto:8c0942cd@forensics.dmarc-report.com,mailto:28c31c5874@ruf.easydmarc.com;aspf=s;adkim=s;fo=1;\"\"]\n[deprecated-tls:tls_1.1] [ssl] [info] antares.tn:443 [\"tls11\"]\n[weak-cipher-suites:tls-1.0] [ssl] [low] antares.tn:443 [\"[tls10 TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA]\"]\n[tls-version] [ssl] [info] antares.tn:443 [\"tls10\"]\n[ssl-issuer] [ssl] [info] antares.tn:443 [\"Google Trust Services\"]\n[ssl-dns-names] [ssl] [info] antares.tn:443 [\"antares.tn\",\"*.antares.tn\"]\n[wildcard-tls] [ssl] [info] antares.tn:443 [\"CN: antares.tn\",\"SAN: [antares.tn *.antares.tn]\"]\n[deprecated-tls:tls_1.0] [ssl] [info] antares.tn:443 [\"tls10\"]\n[weak-cipher-suites:tls-1.1] [ssl] [low] antares.tn:443 [\"[tls11 TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA]\"]\n[tls-version] [ssl] [info] antares.tn:443 [\"tls11\"]\n[tls-version] [ssl] [info] antares.tn:443 [\"tls12\"]\n[tls-version] [ssl] [info] antares.tn:443 [\"tls13\"]\n",
+    "nuclei_stderr": "",
+    "returncode": { "$numberInt": "0" },
+    "source": "nuclei",
+    "scan_id": "ad633f10-a9c4-4fdb-beff-e5ddb7d9a841"
+  },
+  "source": "scanner_api"
+}

@@ -1,0 +1,49 @@
+id: wordpress-royal-elementor-addons
+
+info:
+  name: Royal Elementor Addons and Templates Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/royal-elementor-addons/
+  metadata:
+    plugin_namespace: royal-elementor-addons
+    wpscan: https://wpscan.com/plugin/royal-elementor-addons
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/royal-elementor-addons/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/royal-elementor-addons.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 490a004630440220514ec74aa7e04a6e9ba688869fbe89d8f47b7a6b8a881742533458cb93ff402702207728fe000a1e5d753e0090ae31a636794ec15df678c1c110a19aae0c06908deb:922c64590222798bb761d5b6d8e72950

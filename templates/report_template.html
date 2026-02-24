@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vulnerability Report </title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      background-color: #ffffff;
+      color: #333;
+      font-size: 12px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 10px auto;
+      height: 65px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin: 5px 0 15px 0;
+      font-size: 20px;
+    }
+
+    .url-box {
+      text-align: center;
+      background-color: #e8f6f3;
+      padding: 6px 12px;
+      margin: 12px auto;
+      border: 1px solid #2ecc71;
+      border-radius: 4px;
+      font-size: 13px;
+      display: inline-block;
+    }
+
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      gap: 12px;
+    }
+
+    .left, .right {
+      flex: 1;
+      padding: 8px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .bar-chart { margin-top: 5px; width: 100%; max-width: 400px; }
+    .bar-container { display: flex; align-items: center; margin-bottom: 5px; }
+    .bar-label { min-width: 55px; text-align: right; padding-right: 5px; font-size: 11px; font-weight: bold; }
+    .bar { height: 14px; flex-grow: 1; background-color: #f0f0f0; border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; padding-right: 4px; color: white; font-size: 10px; line-height: 14px; text-align: right; }
+
+    .critical .bar-fill { background-color: #e74c3c; }
+    .high .bar-fill     { background-color: #e67e22; }
+    .medium .bar-fill   { background-color: #f39c12; }
+    .low .bar-fill      { background-color: #3498db; }
+    .info .bar-fill     { background-color: #2ecc71; }
+
+    .scan-info p { margin: 4px 0; font-size: 11px; }
+    .status { color: green; font-weight: bold; font-size: 11px; }
+
+    table {
+      margin-top: 15px;
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+      border-radius: 4px;
+    }
+    th, td {
+      padding: 6px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-size: 11px;
+    }
+    th { background-color: #34495e; color: white; }
+
+    .severity-info { color: #2ecc71; font-weight: bold; }
+    .severity-low { color: #3498db; font-weight: bold; }
+    .severity-medium { color: #f39c12; font-weight: bold; }
+    .severity-high { color: #e67e22; font-weight: bold; }
+    .severity-critical { color: #e74c3c; font-weight: bold; }
+
+    .vuln-table th, .vuln-table td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: 11px;
+    }
+    .vuln-table th { background: #003366; color: white; }
+
+    .description-block {
+      background: #f9f9f9;
+      padding: 8px;
+      margin-top: 8px;
+      border-left: 4px solid #003366;
+      font-size: 11px;
+    }
+
+    .no-result { color: #1f5dc8; font-weight: bold; margin-top: 15px; text-align: center; }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <img class="logo" src="https://i.postimg.cc/Hxdd4mBf/logo-rapport.png" alt="CyberShield Logo">
+  <h1>Vulnerability Report</h1>
+
+  <div class="url-box">✅ {{ scan.target_url }}</div>
+
+  <!-- VULNERABILITY SUMMARY BAR CHART -->
+  {% if (scan.cms_scan and scan.cms_scan.cves)
+        or (nuclei_scan and nuclei_scan.parsed_results)
+        or (zap_scan and zap_scan.alerts) %}
+
+    <div class="summary">
+      <div class="left">
+        <div class="bar-chart">
+          <div class="bar-container">
+            <span class="bar-label">Critical:</span>
+            <div class="bar critical"><div class="bar-fill" style="width: {{ critical_width }}%">{{ critical_count }}</div></div>
+          </div>
+
+          <div class="bar-container">
+            <span class="bar-label">High:</span>
+            <div class="bar high"><div class="bar-fill" style="width: {{ high_width }}%">{{ high_count }}</div></div>
+          </div>
+
+          <div class="bar-container">
+            <span class="bar-label">Medium:</span>
+            <div class="bar medium"><div class="bar-fill" style="width: {{ medium_width }}%">{{ medium_count }}</div></div>
+          </div>
+
+          <div class="bar-container">
+            <span class="bar-label">Low:</span>
+            <div class="bar low"><div class="bar-fill" style="width: {{ low_width }}%">{{ low_count }}</div></div>
+          </div>
+
+          <div class="bar-container">
+            <span class="bar-label">Info:</span>
+            <div class="bar info"><div class="bar-fill" style="width: {{ info_width }}%">{{ info_count }}</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="scan-info">
+          <p><strong>Scanned at:</strong> {{ scan.cms_scan.scanned_at or scan.created_at }}</p>
+          <p><strong>Status:</strong> <span class="status">Finished</span></p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% set network_available = scan.network_scan is defined and scan.network_scan %}
+
+{% set has_vulns =
+   (scan.cms_scan and scan.cms_scan.cves)
+   or (nuclei_scan and nuclei_scan.parsed_results)
+   or (zap_scan and zap_scan.alerts)
+%}
+
+  <!-- WHOIS INFORMATION SECTION -->
+{% if network_available and scan.network_scan.whois is defined and scan.network_scan.whois %}
+<h3>📋 WHOIS Information</h3>
+
+<table>
+  <tr>
+    <th>Domain Name</th>
+    <td>{{ scan.network_scan.whois.domain_name }}</td>
+  </tr>
+
+  <tr>
+    <th>Registrar</th>
+    <td>{{ scan.network_scan.whois.registrar }}</td>
+  </tr>
+
+  <tr>
+    <th>Creation Date</th>
+    <td>{{ scan.network_scan.whois.creation_date }}</td>
+  </tr>
+
+  <tr>
+    <th>Status</th>
+    <td>{{ scan.network_scan.whois.status }}</td>
+  </tr>
+
+  {% if scan.network_scan.whois.registrant_name and scan.network_scan.whois.registrant_name != "None" %}
+  <tr>
+    <th>Registrant</th>
+    <td>{{ scan.network_scan.whois.registrant_name }}</td>
+  </tr>
+  {% endif %}
+
+  {% if scan.network_scan.whois.registrant_address and scan.network_scan.whois.registrant_address != "None" %}
+  <tr>
+    <th>Registrant Address</th>
+    <td>{{ scan.network_scan.whois.registrant_address }}</td>
+  </tr>
+  {% endif %}
+
+  {% if scan.network_scan.whois.admin_name and scan.network_scan.whois.admin_name != "None" %}
+  <tr>
+    <th>Admin Contact</th>
+    <td>{{ scan.network_scan.whois.admin_name }}</td>
+  </tr>
+  {% endif %}
+
+  {% if scan.network_scan.whois.tech_name and scan.network_scan.whois.tech_name != "None" %}
+  <tr>
+    <th>Technical Contact</th>
+    <td>{{ scan.network_scan.whois.tech_name }}</td>
+  </tr>
+  {% endif %}
+
+  {% if scan.network_scan.whois.name_servers %}
+  <tr>
+    <th>Name Servers</th>
+    <td>{{ scan.network_scan.whois.name_servers }}</td>
+  </tr>
+  {% endif %}
+</table>
+{% endif %}
+
+
+  <!-- NETWORK SCAN SECTION -->
+  {% if network_available %}
+
+  <div class="network-section">
+   
+    <!-- Hosts and Ports Information -->
+    {% set profile = scan.network_scan.scan_profile %}
+    {% if scan.network_scan.scans is defined
+    and profile in scan.network_scan.scans
+    and scan.network_scan.scans[profile].hosts %}
+
+      {% for host in scan.network_scan.scans[profile].hosts %}
+
+        <!-- Ports Table -->
+        {% if host.ports %}
+        <h3>📊 Detected Ports</h3>
+        <table class="port-table">
+          <thead>
+            <tr>
+              <th>Port</th>
+              <th>Protocol</th>
+              <th>Service</th>
+              <th>State</th>
+              <th>Product</th>
+              <th>Version</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for port in host.ports %}
+            <tr>
+              <td><strong>{{ port.port }}</strong></td>
+              <td>{{ port.protocol | upper }}</td>
+              <td>{{ port.service }}</td>
+              <td>
+                {% if port.state == 'open' %}
+                  <span class="port-status-open">OPEN</span>
+                {% elif port.state == 'closed' %}
+                  <span class="port-status-closed">CLOSED</span>
+                {% elif port.state == 'filtered' %}
+                  <span class="port-status-filtered">FILTERED</span>
+                {% else %}
+                  {{ port.state | upper }}
+                {% endif %}
+              </td>
+              <td>{{ port.product if port.product else '-' }}</td>
+              <td>{{ port.version if port.version else '-' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- Scan Statistics -->
+
+
+    <!-- DNS Information -->
+   {% if network_available and scan.network_scan.dns is defined %}
+    <h3>🔍 DNS Information</h3>
+    <div class="dns-info">
+      {% if scan.network_scan.dns.A %}
+      <strong>A Records (IPv4):</strong>
+      <ul>
+        {% for record in scan.network_scan.dns.A %}
+        <li>{{ record }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if scan.network_scan.dns.MX %}
+      <strong>MX Records (Mail Servers):</strong>
+      <ul>
+        {% for mx in scan.network_scan.dns.MX %}
+        <li>Priority {{ mx.priority }}: {{ mx.server }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if scan.network_scan.dns.NS %}
+      <strong>NS Records (Name Servers):</strong>
+      <ul>
+        {% for ns in scan.network_scan.dns.NS %}
+        <li>{{ ns }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if scan.network_scan.dns.TXT %}
+      <strong>TXT Records:</strong>
+      <ul>
+        {% for txt in scan.network_scan.dns.TXT %}
+        <li>{{ txt }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if scan.network_scan.dns.SOA %}
+      <strong>SOA Record:</strong>
+      <p>{{ scan.network_scan.dns.SOA }}</p>
+      {% endif %}
+
+      {% if scan.network_scan.dns.SPF %}
+      <strong>SPF Record:</strong>
+      <p>{{ scan.network_scan.dns.SPF }}</p>
+      {% endif %}
+
+      {% if scan.network_scan.dns.CNAME %}
+      <strong>CNAME Records:</strong>
+      <ul>
+        {% for cname in scan.network_scan.dns.CNAME %}
+        <li>{{ cname }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- SSL Information -->
+   {% if network_available and scan.network_scan.ssl is defined %}
+
+<h3>🔒 SSL/TLS Information</h3>
+
+<table>
+  <tr>
+    <th>Certificate Valid</th>
+    <td>
+      {% if scan.network_scan.ssl.valid %}
+        ✅ Yes
+      {% else %}
+        ❌ No
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
+    <th>Valid From</th>
+    <td>{{ scan.network_scan.ssl.not_before }}</td>
+  </tr>
+
+  <tr>
+    <th>Valid Until</th>
+    <td>{{ scan.network_scan.ssl.not_after }}</td>
+  </tr>
+
+  <tr>
+    <th>Days Remaining</th>
+    <td>{{ scan.network_scan.ssl.days_remaining }}</td>
+  </tr>
+
+  <tr>
+    <th>Certificate Version</th>
+    <td>{{ scan.network_scan.ssl.version }}</td>
+  </tr>
+
+  <tr>
+    <th>Serial Number</th>
+    <td>{{ scan.network_scan.ssl.serial_number }}</td>
+  </tr>
+
+  {% if scan.network_scan.ssl.subject %}
+  <tr>
+    <th>Subject (CN)</th>
+    <td>{{ scan.network_scan.ssl.subject[0][0][1] }}</td>
+  </tr>
+  {% endif %}
+
+  {% if scan.network_scan.ssl.issuer %}
+  <tr>
+    <th>Issuer</th>
+    <td>{{ scan.network_scan.ssl.issuer[0][0][1] }}</td>
+  </tr>
+  {% endif %}
+</table>
+{% endif %}
+</div>
+{% endif %}
+
+
+    {% if scan.recon and scan.recon.webanalyze and scan.recon.webanalyze.technologies %}
+      <div style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.08);">
+        <h3 style="margin-bottom:8px; color:#34495e;">🔍 Detected Technologies</h3>
+        <table>
+          <tbody>
+            {% for tech in scan.recon.webanalyze.technologies %}
+              <tr><td style="padding:6px; font-size:12px;">{{ tech.name }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% if scan.recon.httpx and not scan.recon.httpx.error %}
+    {% set has_data = scan.recon.httpx.ip or scan.recon.httpx.status_code or scan.recon.httpx.title %}
+    {% if has_data %}
+      <div style="margin-top:15px; background:#f9f9f9; padding:10px; border-radius:4px;">
+        <h3 style="margin-bottom:8px; color:#34495e;">🌐 Host Information</h3>
+        <table>
+          <tbody>
+            {% if scan.recon.httpx.ip %}
+              <tr><td><b>IP Address:</b></td><td>{{ scan.recon.httpx.ip }}</td></tr>
+            {% endif %}
+            {% if scan.recon.httpx.status_code %}
+              <tr><td><b>HTTP Status:</b></td><td>{{ scan.recon.httpx.status_code }}</td></tr>
+            {% endif %}
+            {% if scan.recon.httpx.title %}
+              <tr><td><b>Page Title:</b></td><td>{{ scan.recon.httpx.title }}</td></tr>
+            {% endif %}
+            {% if scan.recon.httpx.tech %}
+              <tr><td><b>Technologies:</b></td><td>{{ scan.recon.httpx.tech | join(', ') }}</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+    {% endif %}
+
+    {% set wpprobe = scan.cms_scan.wpprobe_report if scan.cms_scan else None %}
+    {% if wpprobe and wpprobe.plugins %}
+      <div style="margin-top:15px; background:#f4f8fb; padding:10px; border-radius:4px;">
+        <h3 style="margin-bottom:8px; color:#2c3e50;">🧩 Plugin Findings</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Plugin</th>
+              <th>Installed Version</th>
+              <th>Severity</th>
+              <th>CVSS</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for plugin_name, entries in wpprobe.plugins.items() %}
+            {% for entry in entries %}
+              {% set version = (entry.version or '') %}
+              {% if not version or version|lower == 'unknown' %}
+                {% set version_display = '-' %}
+              {% else %}
+                {% set version_display = version %}
+              {% endif %}
+              {% if entry.severities %}
+                {% for severity_block in entry.severities %}
+                  {% for severity_label, details in severity_block.items() %}
+                    {% for detail in details %}
+                              {% set vulns = detail.vulnerabilities or [] %}
+                      {% if vulns %}
+                        {% for vuln in vulns %}
+                          {% set severity_value = (severity_label or '')|lower %}
+                          {% if severity_value in ['n/a','na','none','unknown',''] %}
+                            {% set severity_value = '' %}
+                          {% endif %}
+                          {% if not severity_value %}
+                            {% set score = vuln.cvss_score %}
+                            {% if score is not none %}
+                              {% set score_value = score|float(0) %}
+                              {% if score_value >= 9 %}
+                                {% set severity_value = 'critical' %}
+                              {% elif score_value >= 7 %}
+                                {% set severity_value = 'high' %}
+                              {% elif score_value >= 4 %}
+                                {% set severity_value = 'medium' %}
+                              {% else %}
+                                {% set severity_value = 'low' %}
+                              {% endif %}
+                            {% else %}
+                              {% set severity_value = 'low' %}
+                            {% endif %}
+                          {% endif %}
+                          {% set severity_key = severity_value if severity_value in ['low','medium','high','critical'] else 'info' %}
+                          <tr>
+                            <td>{{ plugin_name }}</td>
+                            <td>{{ version_display }}</td>
+                            <td class="severity-{{ severity_key }}">{{ severity_value|capitalize if severity_value else 'Info' }}</td>
+                            <td>
+                              {% set score = vuln.cvss_score %}
+                              {% if score and score|lower not in ['unknown', 'n/a'] %}
+                                {{ score }}
+                              {% else %}
+                                N/A
+                              {% endif %}
+                              {% if vuln.cve %}
+                                <br><small>{{ vuln.cve }}</small>
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      {% else %}
+                        {% set severity_value = (severity_label or '')|lower %}
+                        {% if severity_value in ['n/a','na','none','unknown',''] %}
+                          {% set severity_value = 'low' %}
+                        {% endif %}
+                        {% set severity_key = severity_value if severity_value in ['low','medium','high','critical'] else 'info' %}
+                        <tr>
+                          <td>{{ plugin_name }}</td>
+                          <td>{{ version_display }}</td>
+                          <td class="severity-{{ severity_key }}">{{ severity_value|capitalize if severity_value else 'Info' }}</td>
+                          <td>N/A</td>
+                        </tr>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td>{{ plugin_name }}</td>
+                  <td>{{ version }}</td>
+                  <td class="severity-info">Info</td>
+                  <td colspan="3">No vulnerability details provided.</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% if nuclei_scan and nuclei_scan.parsed_results %}
+      {% set grouped_nuclei = {} %}
+      {% for vuln in nuclei_scan.parsed_results %}
+        {% set type = vuln.name.split(':')[0] %}
+        {% set _ = grouped_nuclei.setdefault(type, []) %}
+        {% set _ = grouped_nuclei[type].append(vuln) %}
+      {% endfor %}
+
+      {% for type, vulns in grouped_nuclei.items() %}
+        <h3 style="font-size:13px; margin-top: 15px; color: #2c3e50;">
+          🔍 {{ type }}
+        </h3>
+        <table class="nuclei-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Protocole</th>
+              <th>Sévérité</th>
+              <th>Hôte</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vuln in vulns %}
+            <tr>
+              <td>{{ vuln.name }}</td>
+              <td>{{ vuln.protocol }}</td>
+              <td class="severity-{{ (vuln.severity or 'info') | lower }}">{{ vuln.severity }}</td>
+              <td>{{ vuln.host }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    {% endif %}
+
+    {% if zap_scan and zap_scan.alerts %}
+
+    {% set grouped_zap = {} %}
+
+    {% for alert in zap_scan.alerts %}
+      {% set name = alert.name or "ZAP Alert" %}
+      {% set risk = alert.risk or "info" %}
+
+      {% set _ = grouped_zap.setdefault(name, {
+        "name": name,
+        "risk": risk,
+        "description": alert.description,
+        "solution": alert.solution,
+        "instances": []
+      }) %}
+      {% set _ = grouped_zap[name].instances.append(alert.instances or []) %}
+    {% endfor %}
+
+    {% for name, alert in grouped_zap.items() %}
+      <h3 style="font-size:13px; margin-button: 15px; color: #2c3e50;">⚠️ {{ name }}</h3>
+      <div style="background:#fefefe; border:1px solid #ddd; border-left:4px solid #e74c3c; padding:10px 12px; border-radius:6px; margin-bottom:10px;">
+        <p><strong>Risk:</strong> <span class="severity-{{ alert.risk | lower }}">{{ alert.risk }}</span></p>
+        {% if alert.description %}
+        <p><strong>Description:</strong> {{ alert.description }}</p>
+        {% endif %}
+        {% if alert.solution %}
+        <p><strong>Solution:</strong> {{ alert.solution }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {% else %}
+      <p class="no-result">No alerts detected.</p>
+    {% endif %}
+</div>
+</body>
+</html>

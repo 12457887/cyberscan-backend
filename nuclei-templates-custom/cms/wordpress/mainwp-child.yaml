@@ -1,0 +1,49 @@
+id: wordpress-mainwp-child
+
+info:
+  name: MainWP Child – Securely Connects to the MainWP Dashboard to Manage Multiple Sites Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/mainwp-child/
+  metadata:
+    plugin_namespace: mainwp-child
+    wpscan: https://wpscan.com/plugin/mainwp-child
+  tags: tech,wordpress,wp-plugin,top-100,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/mainwp-child/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/mainwp-child.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 4a0a004730450220367924cb05ee7d644b0c7794916579b83f04ddd4d30b9e12ffa539a3d6cc2e3d022100d9647c9b5616d54dd79a48cba983177a13f8cac6e996eeb524a371a2e8f6003e:922c64590222798bb761d5b6d8e72950

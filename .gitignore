@@ -1,0 +1,10 @@
+*.log
+sqlmap/
+nmap_scanner.log
+__pycache__/
+venv/
+.env
+*.json
+*.xml
+*.sqlite
+*.db

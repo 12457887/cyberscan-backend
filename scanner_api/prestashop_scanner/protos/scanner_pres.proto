@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+service ScannerService {
+  rpc ScanLight (SiteWithCMS) returns (ScanResponse);
+  rpc ScanComplete (SiteWithCMS) returns (ScanResponse);
+}
+
+message SiteWithCMS {
+  string url = 1;
+  string cms = 2;
+  string mode = 3;
+}
+
+message Vulnerability {
+  string id = 1;
+  string severity = 2;
+}
+
+message ScanResult {
+  string scan_id = 1;
+  string target_url = 2;
+  string cms_type = 3;
+  string mode = 4;
+  string source = 5;
+  double scan_time = 6;
+  string mongo_id = 7;
+  repeated Vulnerability vulnerabilities = 8;
+  string error = 9;
+}
+
+message ScanResponse {
+  string scan_id = 1;
+  string cms_type = 2;
+  string mode = 3;
+  repeated ScanResult results = 4;
+}

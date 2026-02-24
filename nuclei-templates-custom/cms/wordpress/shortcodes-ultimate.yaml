@@ -1,0 +1,49 @@
+id: wordpress-shortcodes-ultimate
+
+info:
+  name: WP Shortcodes Plugin — Shortcodes Ultimate Detection
+  author: ricardomaia
+  severity: info
+  reference:
+    - https://wordpress.org/plugins/shortcodes-ultimate/
+  metadata:
+    plugin_namespace: shortcodes-ultimate
+    wpscan: https://wpscan.com/plugin/shortcodes-ultimate
+  tags: tech,wordpress,wp-plugin,top-200
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/wp-content/plugins/shortcodes-ultimate/readme.txt"
+
+    payloads:
+      last_version: helpers/wordpress/plugins/shortcodes-ultimate.txt
+
+    extractors:
+      - type: regex
+        part: body
+        internal: true
+        name: internal_detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+      - type: regex
+        part: body
+        name: detected_version
+        group: 1
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        name: "outdated_version"
+        dsl:
+          - compare_versions(internal_detected_version, concat("< ", last_version))
+
+      - type: regex
+        part: body
+        regex:
+          - '(?i)Stable.tag:\s?([\w.]+)'
+# digest: 490a0046304402206fb1f7ebe578059463fc0841f6a0acb31df817b6a43ba81a7df7dbc0024c6c9e02201beb090e483c66dfbf02b817ed0affc7a90fc50eb7ed3f534d2477572e1ef152:922c64590222798bb761d5b6d8e72950
