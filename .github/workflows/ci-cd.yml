@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,12 +25,6 @@ jobs:
           tags: ahmedaminehamden/cyberscan-backend:latest
 
       - name: Deploy to k3s
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker pull ahmedaminehamden/cyberscan-backend:latest
-            docker save ahmedaminehamden/cyberscan-backend:latest | sudo k3s ctr images import -
-            kubectl rollout restart deployment/fastapi-pod -n cyberscan
+        run: |
+          docker save ahmedaminehamden/cyberscan-backend:latest | sudo k3s ctr images import -
+          kubectl rollout restart deployment/fastapi-pod -n cyberscan
