@@ -5,8 +5,9 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-push:
+  build-push-deploy:
     runs-on: self-hosted
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,5 +27,7 @@ jobs:
 
       - name: Deploy to k3s
         run: |
-          docker save ahmedaminehamden/cyberscan-backend:latest | sudo k3s ctr images import -
-          kubectl rollout restart deployment/fastapi-pod -n cyberscan
+          export KUBECONFIG=/home/bi/.kube/config
+          kubectl get nodes
+          kubectl rollout restart deployment fastapi-pod -n cyberscan
+          kubectl rollout status deployment fastapi-pod -n cyberscan
