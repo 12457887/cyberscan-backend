@@ -220,8 +220,12 @@ def validate_scan_target(url_value: str) -> tuple[bool, str | None]:
     # ─────────────────────────────
     final_url = _resolve_final_url(raw_value)
     if final_url:
-        final_host = (urlparse(final_url).hostname or "").lower()
+        final_host = (urlparse(final_url).hostname or "").lower().rstrip(".")
+        # Autoriser les redirections vers www. ou sous-domaines du même domaine racine
         if final_host and final_host != hostname:
-            return False, GENERIC_SCAN_REFUSAL
+            root_hostname = hostname.removeprefix("www.")
+            root_final   = final_host.removeprefix("www.")
+            if root_hostname != root_final and not final_host.endswith(f".{root_hostname}"):
+                return False, GENERIC_SCAN_REFUSAL
 
     return True, None

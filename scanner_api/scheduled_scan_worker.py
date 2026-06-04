@@ -6,7 +6,15 @@ from typing import Dict
 import httpx
 from dotenv import load_dotenv
 
-from .supabase_client import SupabaseClient
+try:
+    try:
+    from .supabase_client import SupabaseClient
+except Exception:
+    class SupabaseClient:
+        def __init__(self): self._enabled = False
+except Exception:
+    class SupabaseClient:
+        def __init__(self): self._enabled = False
 
 load_dotenv()
 

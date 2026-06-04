@@ -4,7 +4,10 @@ import subprocess
 import os
 import logging
 import json
+import requests as _requests
 from typing import Dict, Any, Optional
+
+NUCLEI_SERVICE_URL = os.environ.get("NUCLEI_SERVICE_URL", "")
 
 logger = logging.getLogger(__name__)
 
@@ -139,9 +142,23 @@ def run_nuclei_scan(
     timeout: Optional[int] = 240
 ) -> Dict[str, Any]:
 
-    cmd = generate_nuclei_command(url, cms, profile)
-
     logger.info(f"🔎 Starting Nuclei scan → {url} (CMS: {cms}, profile: {profile})")
+
+    # Appel au pod Nuclei si configuré
+    if NUCLEI_SERVICE_URL:
+        try:
+            resp = _requests.post(
+                f"{NUCLEI_SERVICE_URL}/scan",
+                json={"url": url, "cms": cms, "profile": profile, "timeout": timeout},
+                timeout=(10, timeout + 30),
+            )
+            if resp.ok:
+                return resp.json()
+            logger.warning("Nuclei service returned %s, falling back to local", resp.status_code)
+        except Exception as exc:
+            logger.warning("Nuclei service unreachable (%s), falling back to local", exc)
+
+    cmd = generate_nuclei_command(url, cms, profile)
 
     try:
         result = subprocess.run(

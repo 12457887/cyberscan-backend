@@ -276,8 +276,10 @@ def _normalize_network_mode(mode: str | None) -> str:
     return "full"
 
 def _normalize_network_scan_value(value: bool | str | None) -> bool | str | None:
-    if value is None:
+    if value is None or value is False:
         return None
+    if value is True:
+        return "quick"
     if isinstance(value, bool):
         return value
     normalized = str(value).strip().lower()
@@ -452,7 +454,7 @@ async def scan_sites(
     frontend_scan_id: str | None = None,
     preview_only: bool = False,
     request_ip: str | None = None,
-    network_scan: bool | str = False,
+    network_scan: bool | str = "quick",
     collection_override: str | None = None,
     zap_port: int | None = None,   # 👈 AJOUT
 ) -> List[Dict[str, Any]]:
@@ -486,11 +488,12 @@ async def scan_sites(
             if not preview_only and user_id:
                 try:
                     record_scan_activity(
-                        user_id=user_id,
+                        scan_id,
+                        user_id,
+                        "scan_started",
                         target_url=url_str,
                         scan_mode=mode,
                         ip_address=request_ip,
-                        scan_id=scan_id,
                     )
                 except Exception:
                     logger.warning("Failed to record scan activity")
@@ -535,16 +538,25 @@ async def scan_sites(
             webanalyze_task = asyncio.create_task(run_webanalyze(url_str))
             httpx_task = asyncio.create_task(run_httpx(url_str))
 
+            network_scan = _normalize_network_scan_value(network_scan)
+            if network_scan is None:
+                network_scan = "quick"
+            logger.info("NETWORK_SCAN VALUE IN SCAN_SITES: %s", network_scan)
             if network_scan:
-                if isinstance(network_scan, str) and network_scan.lower() in {"quick", "light"}:
-                   network_scan_task = asyncio.create_task(
-                     asyncio.to_thread(run_quick_network_scan, url_str, include_ssl=True)
-                )
-                else:
-                   network_scan_task = asyncio.create_task(
-                      asyncio.to_thread(run_full_network_scan, url_str)
-                  )
-
+                import httpx as _httpx
+                async def _call_network_service():
+                    NETWORK_URL = os.getenv("NETWORK_SERVICE_URL", "http://network-service:8002")
+                    try:
+                        async with _httpx.AsyncClient(timeout=120) as client:
+                            resp = await client.post(f"{NETWORK_URL}/scan", json={
+                                "url": url_str,
+                                "mode": "quick" if isinstance(network_scan, str) and network_scan.lower() in {"quick","light"} else "full",
+                                "include_ssl": True
+                            })
+                            return resp.json()
+                    except Exception as e:
+                        return {"error": str(e), "source": "network"}
+                network_scan_task = asyncio.create_task(_call_network_service())
 
             # =====================================================
 # 🔥 MODE COMPLETE → ON NE BLOQUE PAS
@@ -625,9 +637,12 @@ async def scan_sites(
             if isinstance(nuclei_data, Exception) or not isinstance(nuclei_data, dict):
                 nuclei_data = {"skipped": True, "source": "nuclei"}
 
-            nuclei_stdout = nuclei_data.get("nuclei_stdout", "")
-            parsed = parse_nuclei_output(nuclei_stdout) if nuclei_stdout else []
-            nuclei_data["parsed_results"] = parsed
+            # Utiliser parsed_results du service si disponible
+            existing_parsed = nuclei_data.get("parsed_results", [])
+            if not existing_parsed:
+                nuclei_stdout = nuclei_data.get("nuclei_stdout", "")
+                existing_parsed = parse_nuclei_output(nuclei_stdout) if nuclei_stdout else []
+            nuclei_data["parsed_results"] = existing_parsed
 
             if nuclei_data.get("error"):
                 nuclei_data["skipped"] = True
@@ -894,7 +909,7 @@ async def scan_light(site: SiteWithCMS, request: Request):
     client_ip = _extract_request_ip(request)
     network_scan_value = _normalize_network_scan_value(site.network_scan)
     if network_scan_value is None:
-        network_scan_value = False
+        network_scan_value = "quick"
     _schedule_background_scan(
         scan_sites(
             site.cms,

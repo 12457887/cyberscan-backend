@@ -25,7 +25,7 @@ SCAN_PROGRESS: Dict[str, Dict[str, Any]] = {}
 # 🔧 ENV CONFIG
 # -------------------------------------------------
 ZAP_API_KEY = os.getenv("ZAP_API_KEY", "")
-ZAP_PORT = os.getenv("ZAP_PORT", "8090")
+ZAP_PORT = os.getenv("ZAP_PORT", "8080")
 ZAP_HOST = os.getenv("ZAP_HOST", f"http://127.0.0.1:{ZAP_PORT}")
 ZAP_TIMEOUT = int(os.getenv("ZAP_TIMEOUT", "20"))
 
@@ -79,10 +79,10 @@ def zap_get(
 # =================================================
 # 🚀 ZAP LIGHT SCAN (PASSIVE ONLY)
 # =================================================
-def run_zap_light_scan(target: str, zap_port: int) -> Dict[str, Any]:
+def run_zap_light_scan(target: str, zap_port: int | None = None) -> Dict[str, Any]:
     logger.info(f"🟦 ZAP Light Scan → {target} (port {zap_port})")
 
-    host = f"http://127.0.0.1:{zap_port}"
+    host = f"http://127.0.0.1:{zap_port}" if zap_port is not None else ZAP_HOST
 
     try:
         parsed = urlparse(target)

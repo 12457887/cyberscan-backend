@@ -776,7 +776,7 @@ def register_report_generation_routes(
 
         html = templates.get_template(template_name).render(context)
         pdf_io = BytesIO()
-        HTML(string=html, base_url=str(request.base_url)).write_pdf(pdf_io)
+        HTML(string=html, base_url="http://localhost:8000").write_pdf(pdf_io)
         pdf_io.seek(0)
         return pdf_io, "application/pdf", f"rapport_{cms_label}_{mode}.pdf"
 
